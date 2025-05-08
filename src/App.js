@@ -1,9 +1,23 @@
 import TaskList from './task';
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+
+
 function App() {
   const [todos, setTodos] = useState([]);
   const [task, setTask] = useState('');
+  const [ip,setIp]=useState();
+
+  useEffect(()=>{
+    const fetchIp= async()=>{
+      const res= await fetch('https://api.ipify.org?format=json')
+      const data=await res.json();
+      console.log(data.ip);
+       setIp(data.ip);
+    }
+    fetchIp();
+  },[]);
 
   const handleInputChange = (e) => {
     setTask(e.target.value);
@@ -32,6 +46,7 @@ function App() {
     <div>
         <header>
           <h1>Dynamic Task Manager</h1>
+          <h2>{ip}</h2>
         </header>
       <div class="container">
         <div class="column">

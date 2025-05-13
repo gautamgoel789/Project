@@ -46,7 +46,7 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                     sh """
                     aws autoscaling start-instance-refresh \\
-                        --auto-scaling-group-name asg-jenkins \\
+                        --auto-scaling-group-name asg-react \\
                         --strategy Rolling \\
                         --region ${AWS_REGION}
                     """

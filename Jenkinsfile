@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         AWS_REGION = 'us-east-1'
-        S3_BUCKET = 'web-arti'
+        S3_BUCKET = 'myfirst1234ab'
         ARTIFACT_NAME = 'site.zip'
         DEPLOY_TAG = 'release-latest'
     }
@@ -35,7 +35,7 @@ pipeline {
 
         stage('Upload to S3') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                     sh "aws s3 cp ${ARTIFACT_NAME} s3://${S3_BUCKET}/${DEPLOY_TAG}/${ARTIFACT_NAME} --region ${AWS_REGION}"
                 }
             }
@@ -43,10 +43,10 @@ pipeline {
 
         stage('Trigger EC2 Refresh') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                     sh """
                     aws autoscaling start-instance-refresh \\
-                        --auto-scaling-group-name asg-react \\
+                        --auto-scaling-group-name first_asg \\
                         --strategy Rolling \\
                         --region ${AWS_REGION}
                     """

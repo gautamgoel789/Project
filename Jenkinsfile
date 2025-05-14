@@ -2,21 +2,20 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'us-east-1'
-        
         ARTIFACT_NAME = 'site.zip'
-        DEPLOY_TAG = 'release-latest'
-        ARTIFACTORY_SERVER = 'MyArtifactory' // Defined in Jenkins > Artifactory configuration
-        ARTIFACTORY_REPO = 'generic-local'   // Target JFrog repository
+        BUILD_DIR = 'build'
+        JFROG_URL = 'https://trialmewlv1.jfrog.io'
+        JFROG_REPO = 'generic-local'
+        JFROG_TARGET_PATH = 'release-latest/'
     }
 
     tools {
-        jfrog 'jfrog-cli'
-        nodejs 'node18' // Must match your Jenkins tool name
+        nodejs 'node18'          // Replace with your configured Node.js version label
+        jfrog 'jfrog-cli'        // Make sure JFrog CLI tool is configured in Jenkins
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/GoutamTx/Project.git'
             }
@@ -34,40 +33,39 @@ pipeline {
             }
         }
 
-        stage('Zip Build Folder') {
+        stage('Zip Artifact') {
             steps {
-                sh "zip -r ${ARTIFACT_NAME} build"
+                sh "zip -r ${ARTIFACT_NAME} ${BUILD_DIR}/"
             }
         }
 
-      
-
-        stage('Upload to JFrog Artifactory') {
+        stage('Upload to JFrog') {
             steps {
-                script {
-                    def server = Artifactory.server(ARTIFACTORY_SERVER)
-
-                    def uploadSpec = """{
-                        "files": [{
-                            "pattern": "${ARTIFACT_NAME}",
-                            "target": "${ARTIFACTORY_REPO}/${DEPLOY_TAG}/"
-                        }]
-                    }"""
-
-                    server.upload(uploadSpec)
+                withCredentials([usernamePassword(credentialsId: 'jfrog-creds', usernameVariable: 'JFROG_USER', passwordVariable: 'JFROG_PASS')]) {
+                    sh '''
+                        jfrog rt config --url ${JFROG_URL} --user $JFROG_USER --password $JFROG_PASS --interactive=false
+                        jfrog rt upload "${ARTIFACT_NAME}" "${JFROG_REPO}/${JFROG_TARGET_PATH}"
+                    '''
                 }
             }
         }
 
-        
+        stage('Publish Build Info') {
+            steps {
+                sh '''
+                    jfrog rt build-collect-env
+                    jfrog rt build-publish
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo "✅ Site deployed and artifact uploaded successfully!"
+            echo "✅ Build and upload to JFrog Artifactory successful!"
         }
         failure {
-            echo "❌ Pipeline failed!"
+            echo "❌ Build or upload failed!"
         }
     }
 }

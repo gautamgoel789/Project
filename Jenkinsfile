@@ -47,9 +47,10 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 sh '''
-                    docker stop gautam789/project || true
-                    docker rm gautam789/project || true
-                    docker run -d --name gautam789/project -p 80:80 $DOCKER_REGISTRY/$IMAGE_NAME
+                    docker stop project-container
+                   docker rm project-container
+                  docker run -d --name project-container -p 80:80 gautam789/project
+
                 '''
             }
         }

@@ -44,7 +44,14 @@ pipeline {
                 sh 'docker push $IMAGE_NAME'
             }
         }
+        stage('creating container'){
+            sh'''
+            docker pull gautam789/project
+            docker run -d -p 80:80 gautam789/project
+            '''
+        }
     }
+    
 
     post {
         always {

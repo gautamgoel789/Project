@@ -44,6 +44,15 @@ pipeline {
                 sh 'docker push $IMAGE_NAME'
             }
         }
+        stage('Run Docker Container') {
+            steps {
+                sh '''
+                    docker stop react-todo || true
+                    docker rm react-todo || true
+                    docker run -d --name gautam789/project -p 80:80 $DOCKER_REGISTRY/$IMAGE_NAME
+                '''
+            }
+        }
     }
     
 

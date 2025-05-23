@@ -10,5 +10,5 @@ FROM node:18-alpine
 RUN npm install -g serve
 WORKDIR /app
 COPY --from=builder /app/build ./build
-EXPOSE 80
-CMD ["serve", "-s", "build", "-l", "80"]
+EXPOSE 3000
+CMD ["serve", "-s", "build", "-l", "3000"]

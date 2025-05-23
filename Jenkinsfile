@@ -47,9 +47,9 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 sh '''
-                    docker stop project-container
-                   docker rm project-container
-                  docker run -d --name project-container -p 80:80 gautam789/project
+                    docker stop dazzling_chaum
+                   docker rm dazzling_chaum
+                  docker run -d --name dazzling_chaum -p 80:80 gautam789/project
 
                 '''
             }

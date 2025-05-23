@@ -46,8 +46,9 @@ pipeline {
         }
         stage('creating container'){
             sh'''
-            docker pull gautam789/project
-            docker run -d -p 80:80 gautam789/project
+           docker stop react-todo || true
+                    docker rm react-todo || true
+                    docker run -d --name react-todo -p 80:80 $DOCKER_REGISTRY/$IMAGE_NAME
             '''
         }
     }

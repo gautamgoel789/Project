@@ -9,7 +9,7 @@ pipeline {
         JFROG_TARGET_PATH = 'release-latest/'
         BUILD_NAME = 'react-website'
         BUILD_NUMBER = "${BUILD_NUMBER}"
-         IMAGE_NAME = 'Gautam789/Project'
+         IMAGE_NAME = 'gautam789/project'
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds-id')
         
     }
